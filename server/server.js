@@ -2,6 +2,7 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
+const { generateMessage } = require('./utils/message');
 
 //console.log(__dirname + '../public'); gives different path, hence use path.join() as shown below
 const publicPath = path.join(__dirname, '../public');
@@ -15,18 +16,10 @@ var io = socketIO(server);
 io.on('connection', (socket) => {
     console.log('New user connected');
 
-    socket.emit('newMessage', {
-        from: 'Admin',
-        text: 'Welcome to the chat App!',
-        createdAt: 123123
-    });
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat App!'));
 
-     socket.broadcast.emit('newMessage', {
-        from: 'Admin',
-        text: 'New user joined!',
-        createdAt: 123123
-    });
-     
+    socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined!'));
+
 
     // socket.emit('newMessage', {
     //     from: 'gymjohn',
@@ -35,11 +28,7 @@ io.on('connection', (socket) => {
     // });
 
     socket.on('createMessage', (message) => {
-        io.emit('newMessage', {
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getTime()
-        });
+        io.emit('newMessage', generateMessage(message.from, message.text));
         // socket.broadcast.emit('newMessage', {
         //     from: message.from,
         //     text: message.text,
