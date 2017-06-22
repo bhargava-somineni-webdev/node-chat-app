@@ -2,11 +2,6 @@ var socket = io();
 
 socket.on('connect', function () {
     console.log('Connected to server');
-
-    // socket.emit('createMessage', {
-    //     from: 'timclient',
-    //     text: 'Hey! why so serious?'
-    // });
 });
 
 socket.on('disconnect', function () {
@@ -15,4 +10,24 @@ socket.on('disconnect', function () {
 
 socket.on('newMessage', function (message) {
     console.log('New message', message);
+    var li = jQuery('<li></li>');
+    li.text(`${message.from}: ${message.text}`);
+    jQuery('#messages').append(li);
+});
+
+// socket.emit('createMessage', {
+//     from: 'timclient',
+//     text: 'Hey! why so serious?'
+// }, function (data) {
+//     console.log(data);
+// });
+
+jQuery('#message-form').on('submit', function (e) {
+    e.preventDefault();
+    socket.emit('createMessage', {
+        from: 'timclient',
+        text: jQuery('[name=message]').val()
+    }, function (data) {
+        console.log(data);
+    });
 });
